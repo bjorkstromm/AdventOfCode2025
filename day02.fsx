@@ -34,3 +34,33 @@ let part1 filename =
     |> Array.Parallel.map invalidValues
     |> Array.concat
     |> Array.sum
+
+// Part 2
+
+let isInvalid2 value =
+    let str = value.ToString()
+    let chunks = [|1..str.Length / 2|]
+
+    // Check all possible chunk sizes
+    chunks
+    |> Array.Parallel.exists (fun size ->
+        str
+        |> Seq.chunkBySize size
+        |> Seq.map System.String
+        |> Seq.distinct
+        |> Seq.length
+        |> (=) 1
+    )
+
+let invalidValues2 range =
+    range
+    |> values
+    |> Array.Parallel.filter isInvalid2
+
+let part2 filename =
+    filename
+    |> System.IO.File.ReadAllText
+    |> parseRanges
+    |> Array.Parallel.map invalidValues2
+    |> Array.concat
+    |> Array.sum
